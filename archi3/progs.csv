@@ -1,4 +1,5 @@
 #TAG,NAME IN REPO (or git url),PURPOSE (should be a verb phrase to sound right while installing)
+#font-joypixels missing!
 #,osspd-alsa,"is an audio interface with ALSA."
 #,pulseaudio-alsa,"is an audio interface with ALSA."
 #,xserver-xorg-xdpyinfo,"aids with resolution determination and screen recording."
@@ -7,7 +8,6 @@
 #A,sc-im,"will compile later"
 #A,simple-mtpfs,"enables the mounting of cell phones."
 #A,urlscan,"parses URLs in the terminal allowing keyboard-based selection."
-#font-joypixels missing!
 ,libx11-dev,"needed for compiling"
 ,libxft-dev,"needed for compiling"
 ,libxinerama-dev,"needed for compiling"
