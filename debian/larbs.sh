@@ -1,5 +1,4 @@
 #Still work in progress
-
 #!/bin/sh
 # Luke's Auto Rice Boostrapping Script (LARBS)
 # by Luke Smith <luke@lukesmith.xyz>
@@ -19,7 +18,7 @@ esac done
 
 # DEFAULTS:
 [ -z "$dotfilesrepo" ] && dotfilesrepo="https://github.com/lukesmithxyz/voidrice.git" && repobranch="archi3"
-#[ -z "$progsfile" ] && progsfile="https://raw.githubusercontent.com/fherking/LARBS/master/debian/progs.csv"
+#[ -z "$progsfile" ] && progsfile="https://raw.githubusercontent.com/LukeSmithxyz/LARBS/master/archi3/progs.csv"
 [ -z "$progsfile" ] && progsfile="192.168.10.20/v2/test/progs.csv"
 [ -z "$aurhelper" ] && aurhelper="yay"
 [ -z "$repobranch" ] && repobranch="master"
@@ -59,9 +58,9 @@ preinstallmsg() { \
 adduserandpass() { \
 	# Adds user `$name` with password $pass1.
 	dialog --infobox "Adding user \"$name\"..." 4 50
-	useradd -m -g wheel -s /bin/bash "$name" >/dev/null 2>&1 ||
-	usermod -a -G wheel "$name" && mkdir -p /home/"$name" && chown "$name":wheel /home/"$name"
-	echo "$name:$pass1" | chpasswd
+	/usr/sbin/useradd -m -g wheel -s /bin/bash "$name" >/dev/null 2>&1 ||
+	/usr/sbin/usermod -a -G wheel "$name" && mkdir -p /home/"$name" && chown "$name":wheel /home/"$name"
+	echo "$name:$pass1" | /usr/sbin/chpasswd
 	unset pass1 pass2 ;}
 
 refreshkeys() { \
@@ -86,14 +85,13 @@ maininstall() { # Installs all needed programs from main repo.
 gitmakeinstall() {
 	clear
 	dir=$(mktemp -d)
-	dialog --title "LARBS Installation" --infobox "Installing \`$(basename "$1")\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 5 70
-	git clone --depth 1 "$1" "$dir" >/dev/null 2>&1
+	#dialog --title "LARBS Installation" --infobox "Installing \`$(basename "$1")\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 5 70
+	git clone --depth 1 "$1" "$dir" 
 	cd "$dir" || exit
-	make >/dev/null 2>&1
-	make install >/dev/null 2>&1
+	make 
+	make install 
 	cd /tmp || return ;
-
-	
+	echo "pulsa una tecla" ; read tecla
 
 	}
 
@@ -105,11 +103,9 @@ aurinstall() { \
 pipinstall() { \
 	dialog --title "LARBS Installation" --infobox "Installing the Python package \`$1\` ($n of $total). $1 $2" 5 70
 	#command -v pip || pacman -S --noconfirm --needed python-pip >/dev/null 2>&1
-	command -v pip || 
-
-	apt-get install -y -q python-pip >/dev/null 2>&1
+	apt-get install -y -q python-pip 
 	yes | pip install "$1"
-	
+	echo "pulsa una tecla" ; read tecla
 	}
 
 installsc_im(){
@@ -130,7 +126,7 @@ installsc_im(){
 	sed -i 's/LDLIBS := -lm -lncurses/LDLIBS := -lm -lncursesw -lzip -lxml2/g'  "$tempdir/src/Makefile"
 	sudo -u "$name" make -C   "$tempdir/src" #>/dev/null 2>&1 &&
 	sudo make install -C "$tempdir/src" #>/dev/null 2>&1 &&
-	
+	echo "pulsa una tecla" ; read tecla
 }	
 
 install_xcbutil(){
@@ -142,7 +138,7 @@ install_xcbutil(){
 	./autogen.sh --prefix=/usr
 	make
 	sudo make install
-	#ping google.com -i 5 -c 10 > /dev/null 
+	echo "pulsa una tecla" ; read tecla
 }
 
 install_i3gaps(){
@@ -164,7 +160,7 @@ install_i3gaps(){
 	../configure --prefix=/usr --sysconfdir=/etc --disable-sanitizers
 	make
 	sudo make install
-	#ping google.com -i 5 -c 10  > /dev/null 
+	echo "pulsa una tecla" ; read tecla
 }
 
 
@@ -191,9 +187,9 @@ putgitrepo() { # Downlods a gitrepo $1 and places the files in $2 only overwriti
 	dir=$(mktemp -d)
 	[ ! -d "$2" ] && mkdir -p "$2" && chown -R "$name:wheel" "$2"
 	chown -R "$name:wheel" "$dir"
-	sudo -u "$name" git clone -b "$branch" --depth 1 "$1" "$dir/gitrepo" #>/dev/null 2>&1 &&
+	sudo -u "$name" git clone -b "$branch" --depth 1 "$1" "$dir/gitrepo" 
 	sudo -u "$name" cp -rfT "$dir/gitrepo" "$2"
-	
+	echo "pulsa una tecla" ; read tecla
 	}
 
 serviceinit() { for service in "$@"; do
@@ -250,12 +246,14 @@ preinstallmsg || error "User exited."
 adduserandpass || error "Error adding username and/or password."
 
 apt-get -q -y install sudo
-adduser root sudo
-adduser $name sudo
-groupadd wheel
+/usr/sbin/usermod -a -G sudo root
+/usr/sbin/usermod -a -G sudo $name
+/usr/sbin/groupadd wheel
 echo "%sudo ALL=(ALL:ALL) ALL" > /etc/sudoers
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers
 /etc/init.d/sudo restart
+
+echo "pulsa una tecla" ; read tecla
 
 apt-get update
 dialog --title "LARBS Installation" --infobox "Installing \`basedevel\` and \`git\` for installing other software." 5 70
@@ -269,8 +267,7 @@ apt-get install -y -q build-essential git >/dev/null 2>&1
 # and all build dependencies are installed.
 
 installationloop
-pip install ueberzug
-install_i3gaps
+
 
 
 # Install the dotfiles in the user's home directory
@@ -289,7 +286,8 @@ rm -f "/home/$name/README.md" "/home/$name/LICENSE"
 
 #compiles sc-im
 installsc_im 
-
+pip install ueberzug
+install_i3gaps
 
 #restore sudo rights
 
