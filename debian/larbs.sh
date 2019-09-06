@@ -305,6 +305,6 @@ echo "%wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/syst
 /etc/init.d/sudo restart
 updatedb
 
-# Last message! Install complete!
-#finalize
-#clear
+ Last message! Install complete!
+finalize
+clear
