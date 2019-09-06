@@ -1,5 +1,6 @@
-# Luke's Auto-Rice Bootstraping Scripts (LARBS)
+# Luke's Auto-Rice Bootstraping Scripts for DEBIAN (LARBS)
 
+!!!STILL IN BETA!!!
 
 ## Installation:
 
