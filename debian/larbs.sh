@@ -19,7 +19,7 @@ esac done
 
 # DEFAULTS:
 [ -z "$dotfilesrepo" ] && dotfilesrepo="https://github.com/lukesmithxyz/voidrice.git" && repobranch="archi3"
-#[ -z "$progsfile" ] && progsfile="https://raw.githubusercontent.com/LukeSmithxyz/LARBS/master/archi3/progs.csv"
+#[ -z "$progsfile" ] && progsfile="https://raw.githubusercontent.com/fherking/LARBS/master/debian/progs.csv"
 [ -z "$progsfile" ] && progsfile="192.168.10.20/v2/test/progs.csv"
 [ -z "$aurhelper" ] && aurhelper="yay"
 [ -z "$repobranch" ] && repobranch="master"
