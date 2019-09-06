@@ -1,4 +1,3 @@
-#Still work in progress
 #!/bin/sh
 # Luke's Auto Rice Boostrapping Script (LARBS)
 # by Luke Smith <luke@lukesmith.xyz>
@@ -77,39 +76,49 @@ newperms() { # Set special sudoers settings for install (or after).
 
 
 maininstall() { # Installs all needed programs from main repo.
-	dialog --title "LARBS Installation" --infobox "Installing \`$1\` ($n of $total). $1 $2" 5 70
-	apt-get install -y -q "$1" >/dev/null 2>&1
+	#dialog --title "LARBS Installation" --infobox "Installing \`$1\` ($n of $total). $1 $2" 5 70
+	apt-get install -y -q "$1" #>/dev/null 2>&1
 	
 	}
+ip
 
-gitmakeinstall() {
-	clear
-	dir=$(mktemp -d)
-	#dialog --title "LARBS Installation" --infobox "Installing \`$(basename "$1")\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 5 70
-	git clone --depth 1 "$1" "$dir" 
-	cd "$dir" || exit
-	make 
-	make install 
-	cd /tmp || return ;
-	echo "pulsa una tecla" ; read tecla
-
-	}
 
 aurinstall() { \
 
 	clear
 	}
 
+
+stinstall() {
+	dir=/home/$user/build/st
+
+	#dialog --title "LARBS Installation" --infobox "Installing \`$(basename "$1")\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 5 70
+	git clone --depth 1 https://github.com/lukesmithxyz/dmenu.git $dir
+	cd $dir
+	make make 
+	sudo make install 
+	
+	
+
+	}
+	
+gitmakeinstall() {
+	dir=$(mktemp -d)
+#	dialog --title "LARBS Installation" --infobox "Installing \`$(basename "$1")\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 5 70
+	git clone --depth 1 "$1" "$dir"
+	cd "$dir" || exit
+	make
+	make install
+	}
+
 pipinstall() { \
-	dialog --title "LARBS Installation" --infobox "Installing the Python package \`$1\` ($n of $total). $1 $2" 5 70
-	#command -v pip || pacman -S --noconfirm --needed python-pip >/dev/null 2>&1
-	apt-get install -y -q python-pip 
-	yes | pip install "$1"
-	echo "pulsa una tecla" ; read tecla
+	#dialog --title "LARBS Installation" --infobox "Installing the Python package \`$1\` ($n of $total). $1 $2" 5 70
+	#apt-get install -y -q python-pip 
+	pip3 install "$1"
+	
 	}
 
 installsc_im(){
-	clear
 	echo "istalando im"
 	apt-get -y -q install libzip-dev libxml2-dev bison  libncurses5-dev libncursesw5-dev
 	apt-get -y -q install stow
@@ -124,9 +133,9 @@ installsc_im(){
 	sed -i 's/XLSX :=/#XLSX :=/g'  "$tempdir/src/Makefile"
 	sed -i 's/#XLSX := -DXLSX/XLSX := -DXLSX/g'  "$tempdir/src/Makefile"
 	sed -i 's/LDLIBS := -lm -lncurses/LDLIBS := -lm -lncursesw -lzip -lxml2/g'  "$tempdir/src/Makefile"
-	sudo -u "$name" make -C   "$tempdir/src" #>/dev/null 2>&1 &&
-	sudo make install -C "$tempdir/src" #>/dev/null 2>&1 &&
-	echo "pulsa una tecla" ; read tecla
+	sudo -u "$name" make -C   "$tempdir/src" 
+	sudo make install -C "$tempdir/src"
+	
 }	
 
 install_xcbutil(){
@@ -138,7 +147,7 @@ install_xcbutil(){
 	./autogen.sh --prefix=/usr
 	make
 	sudo make install
-	echo "pulsa una tecla" ; read tecla
+	
 }
 
 install_i3gaps(){
@@ -160,7 +169,7 @@ install_i3gaps(){
 	../configure --prefix=/usr --sysconfdir=/etc --disable-sanitizers
 	make
 	sudo make install
-	echo "pulsa una tecla" ; read tecla
+	
 }
 
 
@@ -189,7 +198,7 @@ putgitrepo() { # Downlods a gitrepo $1 and places the files in $2 only overwriti
 	chown -R "$name:wheel" "$dir"
 	sudo -u "$name" git clone -b "$branch" --depth 1 "$1" "$dir/gitrepo" 
 	sudo -u "$name" cp -rfT "$dir/gitrepo" "$2"
-	echo "pulsa una tecla" ; read tecla
+	
 	}
 
 serviceinit() { for service in "$@"; do
@@ -253,12 +262,12 @@ echo "%sudo ALL=(ALL:ALL) ALL" > /etc/sudoers
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers
 /etc/init.d/sudo restart
 
-echo "pulsa una tecla" ; read tecla
+
 
 apt-get update
 dialog --title "LARBS Installation" --infobox "Installing \`basedevel\` and \`git\` for installing other software." 5 70
 
-apt-get install -y -q build-essential git >/dev/null 2>&1
+apt-get install -y -q build-essential git 
 
 
 # The command that does all the installing. Reads the progs.csv file and
@@ -268,6 +277,11 @@ apt-get install -y -q build-essential git >/dev/null 2>&1
 
 installationloop
 
+#compiles sc-im
+stinstall
+installsc_im
+pip3 install ueberzug
+install_i3gaps
 
 
 # Install the dotfiles in the user's home directory
@@ -284,10 +298,6 @@ rm -f "/home/$name/README.md" "/home/$name/LICENSE"
 # Enable services here.
 #serviceinit NetworkManager cronie
 
-#compiles sc-im
-installsc_im 
-pip install ueberzug
-install_i3gaps
 
 #restore sudo rights
 
@@ -297,5 +307,5 @@ echo "%wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/syst
 updatedb
 
 # Last message! Install complete!
-finalize
-clear
+#finalize
+#clear
