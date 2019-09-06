@@ -2,6 +2,8 @@
 
 !!!STILL IN BETA!!!
 
+DO NOT USE
+
 ## Installation:
 
 On an Arch based distribution as root, run the following:
