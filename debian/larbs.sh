@@ -17,7 +17,8 @@ esac done
 
 # DEFAULTS:
 [ -z "$dotfilesrepo" ] && dotfilesrepo="https://github.com/lukesmithxyz/voidrice.git" && repobranch="archi3"
-[ -z "$progsfile" ] && progsfile="https://raw.githubusercontent.com/fherking/LARBS/master/debian/progs.csv"
+#[ -z "$progsfile" ] && progsfile="https://raw.githubusercontent.com/fherking/LARBS/master/debian/progs.csv"
+[ -z "$progsfile" ] && progsfile="192.168.10.20/v2/test/progs.csv"
 [ -z "$aurhelper" ] && aurhelper="yay"
 [ -z "$repobranch" ] && repobranch="master"
 
@@ -89,7 +90,7 @@ aurinstall() { \
 
 
 stinstall() {
-	dir=/home/$user/build/st
+	dir=/home/$name/build/st
 
 	#dialog --title "LARBS Installation" --infobox "Installing \`$(basename "$1")\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 5 70
 	git clone --depth 1 https://github.com/lukesmithxyz/dmenu.git $dir
@@ -277,9 +278,9 @@ apt-get install -y -q build-essential git
 installationloop
 
 #compiles sc-im
-stinstall
 installsc_im
 pip3 install ueberzug
+stinstall
 install_i3gaps
 
 
@@ -305,6 +306,6 @@ echo "%wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/syst
 /etc/init.d/sudo restart
 updatedb
 
- Last message! Install complete!
+#Last message! Install complete!
 finalize
 clear
