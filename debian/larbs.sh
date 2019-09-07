@@ -6,20 +6,9 @@
 ### OPTIONS AND VARIABLES ###
 
 
-while getopts ":a:r:b:p:h" o; do case "${o}" in
-	h) printf "Optional arguments for custom use:\\n  -r: Dotfiles repository (local file or url)\\n  -b: Dotfiles branch (master is assumed otherwise)\\n  -p: Dependencies and programs csv (local file or url)\\n  -a: AUR helper (must have pacman-like syntax)\\n  -h: Show this message\\n" && exit ;;
-	r) dotfilesrepo=${OPTARG} && git ls-remote "$dotfilesrepo" || exit ;;
-	b) repobranch=${OPTARG} ;;
-	p) progsfile=${OPTARG} ;;
-	a) aurhelper=${OPTARG} ;;
-	*) printf "Invalid option: -%s\\n" "$OPTARG" && exit ;;
-esac done
-
 # DEFAULTS:
-[ -z "$dotfilesrepo" ] && dotfilesrepo="https://github.com/lukesmithxyz/voidrice.git" && repobranch="archi3"
-#[ -z "$progsfile" ] && progsfile="https://raw.githubusercontent.com/fherking/LARBS/master/debian/progs.csv"
-[ -z "$progsfile" ] && progsfile="192.168.10.20/v2/test/progs.csv"
-[ -z "$aurhelper" ] && aurhelper="yay"
+[ -z "$dotfilesrepo" ] && dotfilesrepo="https://github.com/fherking/voidrice.git" && repobranch="archi3"
+[ -z "$progsfile" ] && progsfile="https://raw.githubusercontent.com/fherking/LARBS/master/debian/progs.csv"
 [ -z "$repobranch" ] && repobranch="master"
 
 ### FUNCTIONS ###
@@ -57,15 +46,36 @@ preinstallmsg() { \
 adduserandpass() { \
 	# Adds user `$name` with password $pass1.
 	dialog --infobox "Adding user \"$name\"..." 4 50
+	/usr/sbin/groupadd wheel
 	/usr/sbin/useradd -m -g wheel -s /bin/bash "$name" >/dev/null 2>&1 ||
 	/usr/sbin/usermod -a -G wheel "$name" && mkdir -p /home/"$name" && chown "$name":wheel /home/"$name"
 	echo "$name:$pass1" | /usr/sbin/chpasswd
 	unset pass1 pass2 ;}
+	
+modifysudoPass1(){
+me=$(basename "$0")
+groups | sed 's/ /\n/g' | grep sudo
+if [ $? = 1 ]
+then
+	usermod -a -G sudo root
+	usermod -a -G sudo $name
+	echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+	clear
+	echo "sudo rules has been modified, please logout and login again as root to apply groups permissions and execute $PWD/$me again to continue installation."
+	exit
+fi
 
-refreshkeys() { \
-	dialog --infobox "Refreshing Arch Keyring..." 4 40
-	#pacman --noconfirm -Sy archlinux-keyring >/dev/null 2>&1
-	}
+}
+
+finalsudorights(){
+#restore sudo rights
+echo "Defaults        env_reset" > /etc/sudoers
+echo "Defaults        mail_badpass ">> /etc/sudoers
+echo "Defaults        secure_path=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"" >> /etc/sudoers
+
+echo "%sudo ALL=(ALL:ALL) ALL" >> /etc/sudoers
+echo "%wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount,/usr/bin/umount,/usr/bin/packer -Syu,/usr/bin/packer -Syyu,/usr/bin/systemctl restart NetworkManager,/usr/bin/rc-service NetworkManager restart,/usr/bin/loadkeys,/usr/bin/yay" >> /etc/sudoers
+}
 
 newperms() { # Set special sudoers settings for install (or after).
 	sed -i "/#LARBS/d" /etc/sudoers
@@ -76,31 +86,28 @@ newperms() { # Set special sudoers settings for install (or after).
 
 
 maininstall() { # Installs all needed programs from main repo.
-	#dialog --title "LARBS Installation" --infobox "Installing \`$1\` ($n of $total). $1 $2" 5 70
-	apt-get install -y -q "$1" #>/dev/null 2>&1
 	
-	}
-ip
-
-
-aurinstall() { \
-
-	clear
+	apt-get install -y -q "$1" 
+	
 	}
 
 
 stinstall() {
+	clear
 	dir=/home/$name/build/st
+	git clone --depth 1 https://github.com/lukesmithxyz/st.git $dir
+	cd $dir
+	make make 
+	make install 
+}
 
-	#dialog --title "LARBS Installation" --infobox "Installing \`$(basename "$1")\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 5 70
+dmenuinstall() {
+	dir=/home/$name/build/dmenu
 	git clone --depth 1 https://github.com/lukesmithxyz/dmenu.git $dir
 	cd $dir
 	make make 
-	sudo make install 
-	
-	
-
-	}
+	make install 
+}
 	
 gitmakeinstall() {
 	dir=$(mktemp -d)
@@ -109,6 +116,7 @@ gitmakeinstall() {
 	cd "$dir" || exit
 	make
 	make install
+	echo "press a key" ; read key
 	}
 
 pipinstall() { \
@@ -124,8 +132,7 @@ installsc_im(){
 	apt-get -y -q install stow
 	
 	tempdir=/home/$name/build/sc-im
-	sudo -u "$name" git clone https://github.com/andmarti1424/sc-im  $tempdir #>/dev/null 2>&1 &&
-	#sudo -u "$name" cd "$tempdir/src" #>/dev/null 2>&1 &&
+	sudo -u "$name" git clone https://github.com/andmarti1424/sc-im  $tempdir 
 	sed -i 's/prefix=\/usr/prefix=\/usr\/local\/stow\/sc-im/g' "$tempdir/src/Makefile"
 	sed -i 's/DFLT_PAGER := -DDFLT_PAGER=\"less\"/DFLT_PAGER := -DDFLT_PAGER=\"pager\"/g'  "$tempdir/src/Makefile"
 	sed -i 's/foo/bar/g'  "$tempdir/src/Makefile"
@@ -141,7 +148,7 @@ installsc_im(){
 install_xcbutil(){
 	echo "istalando i3 xcb utils"
 	tempdir=/home/$name/build/xcp-utils
-	sudo -u "$name" git clone https://github.com/Airblader/xcb-util-xrm  $tempdir #>/dev/null 2>&1 &&
+	sudo -u "$name" git clone https://github.com/Airblader/xcb-util-xrm  $tempdir 
 	cd $tempdir
 	git submodule update --init
 	./autogen.sh --prefix=/usr
@@ -151,14 +158,16 @@ install_xcbutil(){
 }
 
 install_i3gaps(){
-	clear
+clear
 	echo "istalando i3 gaps"
 	apt-get -y -q install libxcb1-dev libxcb-keysyms1-dev libpango1.0-dev libxcb-util0-dev libxcb-icccm4-dev libyajl-dev libstartup-notification0-dev libxcb-randr0-dev libev-dev libxcb-cursor-dev libxcb-xinerama0-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev autoconf xutils-dev libtool automake  libxcb-xrm-dev libxcb-shape0-dev 
 	
 	install_xcbutil
 	
 	tempdir=/home/$name/build/i3-gaps
-	sudo -u "$name" git clone https://www.github.com/Airblader/i3  $tempdir #>/dev/null 2>&1 &&
+	
+	#	/usr/sbin/sudo -u "$name"
+	git clone https://www.github.com/Airblader/i3  $tempdir 
 	
 	cd $tempdir
 	git checkout gaps && git pull
@@ -168,7 +177,7 @@ install_i3gaps(){
 	cd build
 	../configure --prefix=/usr --sysconfdir=/etc --disable-sanitizers
 	make
-	sudo make install
+	make install
 	
 }
 
@@ -182,7 +191,6 @@ installationloop() { \
 		echo "$comment" | grep "^\".*\"$" >/dev/null 2>&1 && comment="$(echo "$comment" | sed "s/\(^\"\|\"$\)//g")"
 		case "$tag" in
 			"") maininstall "$program" "$comment" ;;
-			"A") aurinstall "$program" "$comment" ;;
 			"G") gitmakeinstall "$program" "$comment" ;;
 			"P") pipinstall "$program" "$comment" ;;
 		esac
@@ -233,9 +241,13 @@ finalize(){ \
 
 # Check if user is root on debian distro. Install dialog.
 
-apt-get install -y -q dialog sudo ||  error "Are you sure you're running this as the root user? Are you sure you're using an Arch-based distro? ;-) Are you sure you have an internet connection? Are you sure your Arch keyring is updated?"
+#install sudo and dialog
 
 
+#apt-get update
+apt-get install -y -q dialog sudo  ||  error "Are you sure you're running this as the root user? Are you sure you're using an Debian 10 - based distro? ;-) Are you sure you have an internet connection? Are you sure your Arch keyring is updated?"
+
+#fix for dialog 
 export NCURSES_NO_UTF8_ACS=1
 
 # Welcome user.
@@ -254,58 +266,35 @@ preinstallmsg || error "User exited."
 
 adduserandpass || error "Error adding username and/or password."
 
-apt-get -q -y install sudo
-/usr/sbin/usermod -a -G sudo root
-/usr/sbin/usermod -a -G sudo $name
-/usr/sbin/groupadd wheel
-echo "%sudo ALL=(ALL:ALL) ALL" > /etc/sudoers
-echo "%wheel ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers
-/etc/init.d/sudo restart
+modifysudoPass1
 
-
-
-apt-get update
 dialog --title "LARBS Installation" --infobox "Installing \`basedevel\` and \`git\` for installing other software." 5 70
 
 apt-get install -y -q build-essential git 
-
 
 # The command that does all the installing. Reads the progs.csv file and
 # installs each needed program the way required. Be sure to run this only after
 # the user has been created and has priviledges to run sudo without a password
 # and all build dependencies are installed.
 
+#bien
 installationloop
-
-#compiles sc-im
 installsc_im
-pip3 install ueberzug
-stinstall
 install_i3gaps
+pip3 install ueberzug
 
-
-# Install the dotfiles in the user's home directory
 putgitrepo "$dotfilesrepo" "/home/$name" "$repobranch"
+
+dmenuinstall
+
+stinstall
+
 rm -f "/home/$name/README.md" "/home/$name/LICENSE"
 
+serviceinit NetworkManager
 
-# Install the LARBS Firefox profile in ~/.mozilla/firefox/
-#putgitrepo "https://github.com/LukeSmithxyz/mozillarbs.git" "/home/$name/.mozilla/firefox"
+finalsudorights
 
-# Pulseaudio, if/when initially installed, often needs a restart to work immediately.
-[ -f /usr/bin/pulseaudio ] && resetpulse
-
-# Enable services here.
-#serviceinit NetworkManager cronie
-
-
-#restore sudo rights
-
-echo "%sudo ALL=(ALL:ALL) ALL" > /etc/sudoers
-echo "%wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount,/usr/bin/umount,/usr/bin/packer -Syu,/usr/bin/packer -Syyu,/usr/bin/systemctl restart NetworkManager,/usr/bin/rc-service NetworkManager restart,/usr/bin/loadkeys,/usr/bin/yay" >> /etc/sudoers
-/etc/init.d/sudo restart
 updatedb
 
-#Last message! Install complete!
-finalize
-clear
+reboot
