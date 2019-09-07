@@ -32,7 +32,7 @@ after installing sudo the first time (not default on debian) you'll need to logo
 	
 To proceed with second part of installation.	
 
-After installation, login as user:
+After installation, computer will reboot, login as user:
 
 important: win key + f1  shows on screen manual (READ IT, BECAUSE YOU WONT KNOW WHAT TO DO)
 
