@@ -2,9 +2,7 @@
 # Luke's Auto Rice Boostrapping Script (LARBS)
 # by Luke Smith <luke@lukesmith.xyz>
 # License: GNU GPLv3
-# "adapted" to debian by fernando.filgueira@gmail.com
-### OPTIONS AND VARIABLES ###
-
+# "adapted" to debian by <fernando.filgueira@gmail.com>
 
 # DEFAULTS:
 [ -z "$dotfilesrepo" ] && dotfilesrepo="https://github.com/fherking/voidrice.git" && repobranch="archi3"
