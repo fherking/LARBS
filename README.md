@@ -18,7 +18,7 @@ login as root
 type the following:
 
 	apt-get -y install curl
-	curl -LO http://fherking.com/experimentos/larbs/larbs.sh && sh larbs.sh
+	curl -LO https://raw.githubusercontent.com/fherking/LARBS/master/debian/larbs.sh && sh larbs.sh
 	
 follow instructions:
 
