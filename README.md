@@ -22,6 +22,12 @@ type the following:
 	
 follow instructions:
 
-after installin sudo the first time you need to logout and login again to get root into sudo group, please follow on screen instructions.
+after installing sudo the first time (not default on debian) you'll need to logout and login again, please follow on screen instructions and  exec the following after login as root again:
 
-win key + f1  shows on screen manual (READ IT, BECAUSE YOU WONT KNOW WHAT TO DO)
+	sh larbs.sh
+	
+To proceed with second part of installation.	
+
+After installation, login as user:
+
+important: win key + f1  shows on screen manual (READ IT, BECAUSE YOU WONT KNOW WHAT TO DO)
