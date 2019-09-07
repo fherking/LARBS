@@ -1,6 +1,8 @@
 # Luke's Auto-Rice Bootstraping Scripts for DEBIAN (LARBS)
 ![alt text](https://raw.githubusercontent.com/fherking/LARBS/master/larbs-debian.jpg)
-Just a proof of concept, i wanted to know how hard would it be to port all the distro to debian (short answer, just a couple of days)
+
+Just a proof of concept...
+I wanted to know how hard would it be to port all the distro to debian (short answer, just a couple of days)
 USE AT YOUR OWN RISK
 
 Tested in vmware virtual machine (it works!!)
