@@ -39,4 +39,5 @@ important: win key + f1  shows on screen manual (READ IT, BECAUSE YOU WONT KNOW 
 like my work?
 
 You can donate to me at https://paypal.me/fernandofilgueira 
+
 Donations are earmarked for whatever the donator wants, usually to go to funds for buying new equipment for my experiments.
