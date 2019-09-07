@@ -36,7 +36,7 @@ After installation, login as user:
 
 important: win key + f1  shows on screen manual (READ IT, BECAUSE YOU WONT KNOW WHAT TO DO)
 
-like my work?
+## Like my work?
 
 You can donate to me at https://paypal.me/fernandofilgueira 
 
