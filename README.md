@@ -1,8 +1,11 @@
 # Luke's Auto-Rice Bootstraping Scripts for DEBIAN (LARBS)
 
-!!!STILL IN BETA!!!
+Just a proof of concept, i wanted to know how hard would it be to port all the distro to debian (short answer, just a couple of days)
+USE AT YOUR OWN RISK
 
-DO NOT USE
+for more info: 
+
+	https://github.com/LukeSmithxyz/voidrice
 
 ## Installation:
 
@@ -18,3 +21,5 @@ type the following:
 follow instructions:
 
 after installin sudo the first time you need to logout and login again to get root into sudo group, please follow on screen instructions.
+
+win key + f1  shows on screen manual (READ IT, BECAUSE YOU WONT KNOW WHAT TO DO)
