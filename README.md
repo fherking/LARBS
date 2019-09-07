@@ -1,4 +1,4 @@
-# Luke's Auto-Rice Bootstraping Scripts for DEBIAN (LARBS)
+# Luke's Auto-Rice Bootstraping Scripts for DEBIAN 10 (LARBS)
 ![alt text](https://raw.githubusercontent.com/fherking/LARBS/master/larbs-debian.jpg)
 
 Just a proof of concept...
