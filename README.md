@@ -3,7 +3,7 @@
 
 Just a proof of concept...
 
-I wanted to know how hard would it be to port all the distro to debian (short answer, just a couple of days)
+I wanted to know how hard would it be to port all the distro from arch to debian (short answer, just a couple of days)
 
 USE AT YOUR OWN RISK
 
