@@ -93,7 +93,7 @@ maininstall() { # Installs all needed programs from main repo.
 stinstall() {
 	clear
 	dir=/home/$name/build/st
-	git clone --depth 1 https://github.com/fherking/st.git $dir
+	git clone --depth 1 https://github.com/lukesmithxyz/st.git $dir
 	cd $dir
 	make make 
 	make install 
@@ -101,7 +101,7 @@ stinstall() {
 
 dmenuinstall() {
 	dir=/home/$name/build/dmenu
-	git clone --depth 1 https://github.com/fherking/dmenu.git $dir
+	git clone --depth 1 https://github.com/lukesmithxyz/dmenu.git $dir
 	cd $dir
 	make make 
 	make install 
@@ -130,7 +130,7 @@ installsc_im(){
 	apt-get -y -q install stow
 	
 	tempdir=/home/$name/build/sc-im
-	sudo -u "$name" git clone https://github.com/fherking/sc-im  $tempdir 
+	sudo -u "$name" git clone https://github.com/andmarti1424/sc-im  $tempdir 
 	sed -i 's/prefix=\/usr/prefix=\/usr\/local\/stow\/sc-im/g' "$tempdir/src/Makefile"
 	sed -i 's/DFLT_PAGER := -DDFLT_PAGER=\"less\"/DFLT_PAGER := -DDFLT_PAGER=\"pager\"/g'  "$tempdir/src/Makefile"
 	sed -i 's/foo/bar/g'  "$tempdir/src/Makefile"
@@ -146,7 +146,7 @@ installsc_im(){
 install_xcbutil(){
 	echo "istalando i3 xcb utils"
 	tempdir=/home/$name/build/xcp-utils
-	sudo -u "$name" git clone https://github.com/fherking/xcb-util-xrm  $tempdir 
+	sudo -u "$name" git clone https://github.com/Airblader/xcb-util-xrm  $tempdir 
 	cd $tempdir
 	git submodule update --init
 	./autogen.sh --prefix=/usr
@@ -165,7 +165,7 @@ clear
 	tempdir=/home/$name/build/i3-gaps
 	
 	#	/usr/sbin/sudo -u "$name"
-	git clone https://www.github.com/fherking/i3  $tempdir 
+	git clone https://www.github.com/Airblader/i3  $tempdir 
 	
 	cd $tempdir
 	git checkout gaps && git pull
