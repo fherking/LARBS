@@ -3,7 +3,7 @@
 # by Luke Smith <luke@lukesmith.xyz>
 # License: GNU GPLv3
 # "adapted" to debian by <fernando.filgueira@gmail.com>
-
+apt-get update
 # DEFAULTS:
 [ -z "$dotfilesrepo" ] && dotfilesrepo="https://github.com/fherking/voidrice.git" && repobranch="archi3"
 [ -z "$progsfile" ] && progsfile="https://raw.githubusercontent.com/fherking/LARBS/master/debian/progs.csv"
@@ -242,7 +242,7 @@ finalize(){ \
 #install sudo and dialog
 
 
-apt-get update
+
 apt-get install -y -q dialog sudo  ||  error "Are you sure you're running this as the root user? Are you sure you're using an Debian 10 - based distro? ;-) Are you sure you have an internet connection? Are you sure your Arch keyring is updated?"
 
 #fix for dialog 
